@@ -49,12 +49,18 @@
                         <thead>
                             <tr>
                                 <th class="text-center">ID</th>
+                                <th class="text-center">ID orden de compra</th>
+                                <th class="text-center">Usuario</th>
+                                <th class="text-center">Fecha</th>
+                                <th class="text-center">Hora</th>
                                 <th class="text-center">Proveedor</th>
                                 <th class="text-center">Depósito</th>
                                 <th class="text-center">Nro. Factura</th>
-                                <th class="text-center">Fecha</th>
-                                <th class="text-center">Hora</th>
+                                <th class="text-center">Producto</th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-center">Precio</th>
                                 <th class="text-center">Total</th>
+                                <th class="text-center">Estado</th>
                                 <th class="text-center">Acción</th>
                             </tr>
                         </thead>
@@ -65,21 +71,34 @@
                                 or die("Error" . mysqli_error($mysqli));
                             while ($data = mysqli_fetch_assoc($query)) {
                                 $cod = $data['cod_compra'];
+                                $cod_orden = $data['id_orden_comp'];
                                 $proveedor = $data['razon_social'];
                                 $deposito = $data['descrip'];
                                 $nro_factura = $data['nro_factura'];
+                                $formato_factura = "000-000-" . str_pad($nro_factura, 3, "0", STR_PAD_LEFT);
                                 $fecha = $data['fecha'];
                                 $hora = $data['hora'];
-                                $total = $data['total_compra'];
+                                $prod = $data['p_descrip'];
+                                $cantidad = $data['cantidad'];
+                                $precio = $data['precio'];
+                                $total = ($data['cantidad'] * $data['precio']);
+                                $estado = $data['estado'];
+                                $usuario = $data['name_user'];
 
                                 echo "<tr>
-                                    <td class='text-center'>$cod</td> 
-                                    <td class='text-center'>$proveedor</td>
-                                    <td class='text-center'>$deposito</td>
-                                    <td class='text-center'>$nro_factura</td>
+                                    <td class='text-center'>$cod</td>
+                                    <td class='text-center'>$cod_orden</td> 
+                                    <td class='text-center'>$usuario</td>
                                     <td class='text-center'>$fecha</td>
                                     <td class='text-center'>$hora</td>
+                                    <td class='text-center'>$proveedor</td>
+                                    <td class='text-center'>$deposito</td>
+                                    <td class='text-center'>$formato_factura</td>
+                                    <td class='text-center'>$prod</td>
+                                    <td class='text-center'>$cantidad</td>
+                                    <td class='text-center'>$precio</td>
                                     <td class='text-center'>$total</td>
+                                    <td class='text-center'>$estado</td>
                                     <td class='text-center' width='80'>
                                         <div class='btn-group' role='group'>
                                             <a data-coreui-toggle='tooltip' title='Anular compra' class='btn btn-danger btn-sm'

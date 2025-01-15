@@ -47,7 +47,102 @@ if (empty($_SESSION['username']) && empty($_SESSION['password'])) {
 
     } elseif ($_GET['module'] == 'stock') {
         include "modules/stock/view.php";
+
+    } elseif ($_GET['module'] == 'ventas') {
+        include "modules/ventas/view.php";
+
+    } elseif ($_GET['module'] == 'form_ventas') {
+        include "modules/ventas/form.php";
+
+    } elseif ($_GET['module'] == 'deposito') {
+        include "modules/deposito/view.php";
+
+    } elseif ($_GET['module'] == 'form_deposito') {
+        include "modules/deposito/form.php";
+
+    } elseif ($_GET['module'] == 'tipo_producto') {
+        include "modules/tipo_producto/view.php";
+
+    } elseif ($_GET['module'] == 'form_tipo_producto') {
+        include "modules/tipo_producto/form.php";
+
+    } elseif ($_GET['module'] == 'unidad_medida') {
+        include "modules/u_medida/view.php";
+
+    } elseif ($_GET['module'] == 'form_u_medida') {
+        include "modules/u_medida/form.php";
+
+    } elseif ($_GET['module'] == 'producto') {
+        include "modules/producto/view.php";
+
+    } elseif ($_GET['module'] == 'form_producto') {
+        include "modules/producto/form.php";
+
+    } elseif ($_GET['module'] == 'proveedor') {
+        include "modules/proveedor/view.php";
+
+    } elseif ($_GET['module'] == 'form_proveedor') {
+        include "modules/proveedor/form.php";
+
+    } elseif ($_GET['module'] == 'pedido') {
+        include "modules/pedido/view.php";
+
+    } elseif ($_GET['module'] == 'form_pedido') {
+        include "modules/pedido/form.php";
+
+    } elseif ($_GET['module'] == 'presupuesto') {
+        include "modules/presupuesto/view.php";
+
+    } elseif ($_GET['module'] == 'form_presupuesto') {
+        include "modules/presupuesto/form.php";
+
+    } elseif ($_GET['module'] == 'orden_c') {
+        include "modules/orden_c/view.php";
+
+    } elseif ($_GET['module'] == 'form_orden_c') {
+        include "modules/orden_c/form.php";
+
+    } elseif ($_GET['module'] == 'cuenta') {
+        include "modules/cuenta/view.php";
+
+    } elseif ($_GET['module'] == 'nota') {
+        include "modules/nota/view.php";
+
+    } elseif ($_GET['module'] == 'form_nota') {
+        include "modules/nota/form.php";
+
+    } elseif ($_GET['module'] == 'ajuste') {
+        include "modules/ajuste/view.php";
+
+    } elseif ($_GET['module'] == 'form_ajuste') {
+        include "modules/ajuste/form.php";
+
+    } elseif ($_GET['module'] == 'pedido_v') {
+        include "modules/pedido_v/view.php";
+
+    } elseif ($_GET['module'] == 'form_pedido_v') {
+        include "modules/pedido_v/form.php";
+
+    } elseif ($_GET['module'] == 'info_pedido') {
+        include "modules/info_pedido/view.php";
+
+    } elseif ($_GET['module'] == 'info_presu') {
+        include "modules/info_presu/view.php";
+
+    } elseif ($_GET['module'] == 'info_orden') {
+        include "modules/info_orden/view.php";
+
+    } elseif ($_GET['module'] == 'info_nota') {
+        include "modules/info_nota/view.php";
+
+    } elseif ($_GET['module'] == 'info_ajuste') {
+        include "modules/info_ajuste/view.php";
+
+    } elseif ($_GET['module'] == 'info_pedido_v') {
+        include "modules/info_pedido_v/view.php";
+
     }
+
 
 }
 ?>

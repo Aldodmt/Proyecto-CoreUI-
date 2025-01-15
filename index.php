@@ -12,11 +12,8 @@
     <title>Sysweb - Login</title>
 
     <!-- CoreUI CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.2.0/dist/css/coreui.min.css" rel="stylesheet"
-        integrity="sha384-u3h5SFn5baVOWbh8UkOrAaLXttgSF0vXI15ODtCSxl0v/VKivnCN6iHCcvlyTL7L" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.2.0/dist/css/themes/bootstrap/bootstrap.min.css"
-        rel="stylesheet" integrity="sha384-nQQlHXZO4YmST3YDqk/JU3f1t2D58a/nPd1QbiLecouKn68glzRym4BlOxlr5Rrg"
-        crossorigin="anonymous">
+    <link href="dist/css/coreui.min.css" rel="stylesheet">
+    <link href="dist/css/themes/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/@coreui/icons/css/all.min.css">
 
 </head>
@@ -45,6 +42,14 @@
                         echo "<div class='alert alert-warning' role='alert'>
                         <strong><i class='fa-solid fa-triangle-exclamation'></i> Atención:</strong> Por favor, ingresa un usuario y contraseña.
                         </div>";
+                    } elseif ($_GET['alert'] == 4) {
+                        echo "<div class='alert alert-success' role='alert'>
+                        <strong><i class='fa-solid fa-circle-check'></i> Salida Exitosa:</strong> Se restaurado la contraseña.
+                        </div>";
+                    } elseif ($_GET['alert'] == 5) {
+                        echo "<div class='alert alert-warning' role='alert'>
+                        <strong><i class='fa-solid fa-triangle-exclamation'></i> Error:</strong> A pasado algo inesperado.
+                        </div>";
                     }
                 }
                 ?>
@@ -68,7 +73,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Ingresar</button>
                             <hr>
-                            <a href="prueba.php">¿Olvidaste tu contraseña?</a>
+                            <a href="modules/recuperar/recuperar.php">¿Olvidaste tu contraseña?</a>
                         </form>
                     </div>
                 </div>
@@ -77,15 +82,8 @@
     </div>
 
     <!-- CoreUI JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.2.0/dist/js/coreui.min.js"
-        integrity="sha384-c4nHOtHRPhkHqJsqK5SH1UkyoL2HUUhzGfzGkchJjwIrAlaYVBv+yeU8EYYxW6h5"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.2.0/dist/js/bootstrap.min.js"
-        integrity="sha384-3sKEChMlWSojj7mapiBAXkrvOPKnTkBJ4sg4LIWclj3/6XkSkRzhnCp1EEgEcufO"
-        crossorigin="anonymous"></script>
+    <script src="dist/js/coreui.min.js"></script>
+    <script src="dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

@@ -1,91 +1,76 @@
 <?php
 if (isset($_POST['id_user'])) {
-    $query = mysqli_query($mysqli, "SELECT *FROM usuarios WHERE id_user = $_POST[id_user]")
-        or die(mysqli_error($mysqli));
+    $query = mysqli_query($mysqli, "SELECT * FROM usuarios WHERE id_user='$_POST[id_user]'")
+        or die('error' . mysqli_error($mysqli));
     $data = mysqli_fetch_assoc($query);
 }
 ?>
 
 <section class="content-header">
     <h1>
-        <i class="cil-pencil icon-title"></i>Modificar perfil de usuario
+        <i class="cil-pencil icon-title"></i> Modificar perfil de usuario
     </h1>
-    <ol class="breadcrumb">
-        <li><a href="?module=start"><i class="cil-home"></i>Inicio</a></li>
-        <li><a href="?module=perfil">Perfil de usuario</a></li>
-        <li class="active">Modificar</li>
-    </ol>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="?module=start"><i class="cil-home"></i> Inicio</a></li>
+            <li class="breadcrumb-item"><a href="?module=perfil">Perfil de usuario</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Modificar perfil de usuario</li>
+        </ol>
+    </nav>
 </section>
 
 <section class="content">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Modificar datos del perfil</h4>
-                </div>
                 <div class="card-body">
-                    <form class="form-horizontal" method="POST" action="modules/perfil/proses.php?act=update"
+                    <form role="form" class="row g-3" method="POST" action="modules/perfil/process.php?act=update"
                         enctype="multipart/form-data">
                         <input type="hidden" name="id_user" value="<?php echo $data['id_user']; ?>">
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Nombre de usuario</label>
-                            <div class="col-sm-5">
-                                <input type="text" class="form-control" name="username" autocomplete="off"
-                                    value="<?php echo $data['username'] ?>" required>
-                            </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="username" class="form-label">Nombre de usuario: </label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                value="<?php echo $data['username']; ?>" required>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Nombre y apellido</label>
-                            <div class="col-sm-5">
-                                <input type="text" class="form-control" name="name_user" autocomplete="off"
-                                    value="<?php echo $data['name_user'] ?>" required>
-                            </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="name_user" class="form-label">Nombre y Apellido: </label>
+                            <input type="text" class="form-control" id="name_user" name="name_user"
+                                value="<?php echo $data['name_user']; ?>" required>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Email</label>
-                            <div class="col-sm-5">
-                                <input type="text" class="form-control" name="email" autocomplete="off"
-                                    value="<?php echo $data['email'] ?>" required>
-                            </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="email" class="form-label">Email: </label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="<?php echo $data['email']; ?>" required>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Teléfono</label>
-                            <div class="col-sm-5">
-                                <input type="text" class="form-control" name="telefono" autocomplete="off"
-                                    value="<?php echo $data['telefono'] ?>" required>
-                            </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="telefono" class="form-label">Teléfono: </label>
+                            <input type="text" class="form-control" id="telefono" name="telefono"
+                                value="<?php echo $data['telefono']; ?>" required>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Foto</label>
-                            <div class="col-sm-5">
-                                <input type="file" name="foto">
-                                <br>
+                        <div class="mb-3 col-md-6">
+                            <label for="foto" class="form-label">Foto: </label>
+                            <input type="file" class="form-control" id="foto" name="foto">
+                            <div class="mt-2">
                                 <?php
                                 if ($data['foto'] == "") { ?>
-                                    <img style="border:1px solid #eaeaea; border-radius:5px;"
-                                        src="images/user/user-default.png" width="75" height="50">
+                                    <img class="img-thumbnail" src="images/user/user-default.png" alt="Foto de usuario">
                                 <?php } else { ?>
-                                    <img style="border:1px solid #eaeaea; border-radius:5px;"
-                                        src="images/user/<?php echo $data['foto']; ?>" width="75" height="50">
-                                <?php }
-                                ?>
+                                    <img class="img-thumbnail" src="images/user/<?php echo $data['foto']; ?>"
+                                        alt="Foto de usuario">
+                                <?php } ?>
                             </div>
                         </div>
-                    </form>
-                </div>
 
-                <div class="card-footer">
-                    <div class="form-group row">
-                        <div class="col-sm-10 offset-sm-2">
-                            <button type="submit" class="btn btn-primary" name="Guardar">Guardar</button>
+                        <div class="d-flex justify-content-between">
+                            <input type="submit" class="btn btn-primary" name="Guardar" value="Guardar">
                             <a href="?module=perfil" class="btn btn-secondary">Cancelar</a>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

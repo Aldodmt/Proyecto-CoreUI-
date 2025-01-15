@@ -1,80 +1,147 @@
 <?php
 session_start();
-
 require_once '../../config/database.php';
 
 if (empty($_SESSION['username']) && empty($_SESSION['password'])) {
-    echo "<meta http-equiv='refresh' content='0; url=index.php?alert=alert=3'>";
-} else {
-    if ($_GET['act'] == 'insert') {
-        if (isset($_POST['Guardar'])) {
-            $codigo = $_POST['codigo'];
-            $codigo_deposito = $_POST['codigo_deposito'];
-            //Insertar detalle de compra
+    echo "<meta http-equiv='refresh' content='0; url=index.php?alert=3'>";
+    exit;
+}
 
-            $sql = mysqli_query($mysqli, "SELECT * FROM producto, tmp WHERE producto.cod_producto = tmp.id_producto");
-            while ($row = mysqli_fetch_array($sql)) {
-                $codigo_producto = $row['id_producto'];
-                $precio = $row['precio_tmp'];
-                $cantidad = $row['cantidad_tmp'];
-                $insert_detalle = mysqli_query($mysqli, "INSERT INTO detalle_compra (cod_producto, cod_compra, cod_deposito, 
-                precio, cantidad) VALUES ($codigo_producto, $codigo, $codigo_deposito, $precio, $cantidad)") or die('Error: ' . mysqli_error($mysqli));
+// Validación del timbrado
+$hoy = date('Y-m-d');
+$sql_vencimiento = $mysqli->prepare("SELECT * FROM timbrado_comp WHERE fecha_fin = ?");
+$sql_vencimiento->bind_param("s", $hoy);
+$sql_vencimiento->execute();
+$result_vencimiento = $sql_vencimiento->get_result();
 
-                //Insertar stock
-                $query = mysqli_query($mysqli, "SELECT * FROM stock WHERE cod_producto = $codigo_producto AND cod_deposito = $codigo_deposito") or die('Error: ' . mysqli_error($mysqli));
-                if ($count = mysqli_num_rows($query) == 0) {
-                    //insertar 
-                    $insertar_stock = mysqli_query($mysqli, "INSERT INTO stock (cod_deposito, cod_producto, cantidad) VALUES ($codigo_deposito, $codigo_producto, $cantidad)") or die("Error: " . mysqli_error($mysqli));
-                } else {
-                    $actualizar_stock = mysqli_query($mysqli, "UPDATE stock SET cantidad = cantidad + $cantidad WHERE cod_producto = $codigo_producto AND cod_deposito = $codigo_deposito")
-                        or die("Error: " . mysqli_error($mysqli));
-                }
-            }
-            //Insertar cabecera de compra 
-            //Definir valores
-            $codigo_proveedor = $_POST['codigo_proveedor'];
-            $fecha = $_POST['fecha'];
-            $hora = $_POST['hora'];
-            $nro_factura = $_POST['nro_factura'];
-            $suma_to = $_POST['suma_total'];
-            $estado = 'activo';
-            $usuario = $_SESSION['id_user'];
-            //Insertar
-            $query = mysqli_query($mysqli, "INSERT INTO compra (cod_compra, cod_proveedor, cod_deposito, nro_factura, fecha, hora, estado, total_compra, id_user) VALUES ($codigo, $codigo_proveedor, $codigo_deposito, '$nro_factura', '$fecha', '$hora', '$estado', $suma_to, $usuario)")
-                or die("Error" . mysqli_error($mysqli));
+if ($result_vencimiento->num_rows > 0) {
+    echo "<script>alert('El timbrado ya ha vencido. Por favor, renueve el timbrado antes de continuar.'); window.history.back();</script>";
+    exit;
+}
 
-            if ($query) {
-                header("Location: ../../main.php?module=compras&alert=1");
-            } else {
-                header("Location: ../../main.php?module=compras&alert=3");
-            }
+if ($_GET['act'] == 'insert' && isset($_POST['Guardar'])) {
+    $codigo = $_POST['codigo'];
+    $codigo_deposito = $_POST['codigo_deposito'];
+    $codigo_proveedor = $_POST['codigo_proveedor'];
+    $fecha = $_POST['fecha'];
+    $hora = $_POST['hora'];
+    $nro_factura = $_POST['nro_factura'];
+    $usuario = $_SESSION['id_user'];
+    $timbrado = $_POST['codigo_tim'];
+    $timbrado_num = $_POST['timb'];
+
+    // Validar datos requeridos
+    /*if (empty($codigo) || empty($codigo_deposito) || empty($codigo_proveedor) || empty($fecha) || empty($nro_factura) || empty($codigo_tim)) {
+        echo "<script>alert('Error: Faltan datos obligatorios.'); window.history.back();</script>";
+        exit;
+    }*/
+
+    // Obtener productos y calcular el total
+    $sql_si = mysqli_query($mysqli, "SELECT * FROM v_orden_comp, tmp_compra WHERE v_orden_comp.id_orden_comp = tmp_compra.id_orden_comp");
+    $total = 0;
+    while ($data = mysqli_fetch_array($sql_si)) {
+        $codigo_producto = $data['cod_producto'];
+        $cantidad = $data['cantidad_aprobada'];
+        $precio_unit = $data['precio_unit'];
+        $total += $cantidad * $precio_unit;
+
+
+
+        // Insertar en `detalle_compra`
+        $stmt = $mysqli->prepare("INSERT INTO detalle_compra (cod_producto, cod_compra, cod_deposito, precio, cantidad) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("iiidi", $codigo_producto, $codigo, $codigo_deposito, $precio_unit, $cantidad);
+        $stmt->execute();
+        $stmt->close();
+
+        // Actualizar stock
+        $query = $mysqli->prepare("SELECT * FROM stock WHERE cod_producto = ? AND cod_deposito = ?");
+        $query->bind_param("ii", $codigo_producto, $codigo_deposito);
+        $query->execute();
+        $result = $query->get_result();
+
+        if ($result->num_rows == 0) {
+            // Insertar si no existe
+            $stmt2 = $mysqli->prepare("INSERT INTO stock (cod_deposito, cod_producto, cantidad) VALUES (?, ?, ?)");
+            $stmt2->bind_param("iii", $codigo_deposito, $codigo_producto, $cantidad);
+            $stmt2->execute();
+            $stmt2->close();
+        } else {
+            // Actualizar si ya existe
+            $stmt3 = $mysqli->prepare("UPDATE stock SET cantidad = cantidad + ? WHERE cod_producto = ? AND cod_deposito = ?");
+            $stmt3->bind_param("iii", $cantidad, $codigo_producto, $codigo_deposito);
+            $stmt3->execute();
+            $stmt3->close();
         }
-    } elseif ($_GET['act'] == 'anular') {
-        if (isset($_GET['cod_compra'])) {
-            $codigo = $_GET['cod_compra'];
-            //Anular cabecera de compra (cambiar estado a anulado)
-            $query = mysqli_query($mysqli, "UPDATE compra SET estado = 'anulado' WHERE cod_compra= $codigo")
-                or die("Error: " . mysqli_error($mysqli));
+    }
 
+    $monto_pagar = 0;
+    $saldo = $total - $monto_pagar;
 
-            //consultar detalle de compra con el codigo que llego por get
-            $sql = mysqli_query($mysqli, "SELECT * FROM detalle_compra WHERE cod_compra = $codigo");
-            while ($row = mysqli_fetch_array($sql)) {
-                $codigo_producto = $row['cod_producto'];
-                $codigo_deposito = $row['cod_deposito'];
-                $cantidad = $row['cantidad'];
+    // Insertar en `det_cuenta_a_pagar`
+    $stmt4 = $mysqli->prepare("INSERT INTO det_cuenta_a_pagar (id_cuenta, monto_total, monto_pagado) VALUES (?, ?, ?)");
+    $stmt4->bind_param("idd", $codigo, $total, $monto_pagar);
+    $stmt4->execute();
+    $stmt4->close();
 
-                $actualizar_stock = mysqli_query($mysqli, "UPDATE stock SET cantidad = cantidad - $cantidad WHERE cod_producto = $codigo_producto AND cod_deposito = $codigo_deposito")
-                    or die("Error: " . mysqli_error($mysqli));
+    // Insertar en `cuentas_a_pagar`
+    $stmt5 = $mysqli->prepare("INSERT INTO cuentas_a_pagar (id_cuenta, fecha_emision, fecha_vencimiento, estado, cod_compra, cod_proveedor) VALUES (?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 90 DAY), 'pendiente', ?, ?)");
+    $stmt5->bind_param("iii", $codigo, $codigo, $codigo_proveedor);
+    $stmt5->execute();
+    $stmt5->close();
 
-            }
-            if ($query) {
-                header("Location: ../../main.php?module=compras&alert=2");
-            } else {
-                header("Location: ../../main.php?module=compras&alert=3");
-            }
+    $sql_orden = mysqli_query($mysqli, "SELECT * FROM v_orden_comp, tmp_compra WHERE v_orden_comp.id_orden_comp = tmp_compra.id_orden_comp");
+    $data_orn = mysqli_fetch_array($sql_orden);
+    $id_orden = $data_orn['id_orden_comp'];
+    $estado = 'activo';
+
+    // Actualizar en `timbrado`
+    $stmt = $mysqli->prepare("UPDATE timbrado_comp SET rango_inicio = ? WHERE id_timbrado  = ?");
+    $stmt->bind_param("ii", $nro_factura, $timbrado);
+    $stmt->execute();
+    $stmt->close();
+
+    // Insertar cabecera de compra
+    $query = mysqli_query($mysqli, "INSERT INTO compra (cod_compra, cod_proveedor, nro_factura, fecha, estado, hora, id_user, id_orden_comp, id_timbrado)
+        VALUES ($codigo, $codigo_proveedor, $nro_factura, '$fecha', '$estado', '$hora', $usuario, $id_orden, $timbrado)")
+        or die("Error" . mysqli_error($mysqli));
+
+    if ($query) {
+        header("Location: ../../main.php?module=compras&alert=1");
+    } else {
+        header("Location: ../../main.php?module=compras&alert=3");
+    }
+
+} elseif ($_GET['act'] == 'anular') {
+    if (isset($_GET['cod_compra'])) {
+        $codigo = $_GET['cod_compra'];
+
+        // Anular cabecera de compra (cambiar estado a anulado)
+        $stmt7 = $mysqli->prepare("UPDATE compra SET estado = 'anulado' WHERE cod_compra = ?");
+        $stmt7->bind_param("i", $codigo);
+        $stmt7->execute();
+        $stmt7->close();
+
+        // Consultar detalle de compra
+        $stmt8 = $mysqli->prepare("SELECT * FROM detalle_compra WHERE cod_compra = ?");
+        $stmt8->bind_param("i", $codigo);
+        $stmt8->execute();
+        $result2 = $stmt8->get_result();
+        while ($row = $result2->fetch_assoc()) {
+            $codigo_producto = $row['cod_producto'];
+            $codigo_deposito = $row['cod_deposito'];
+            $cantidad = $row['cantidad'];
+
+            $stmt9 = $mysqli->prepare("UPDATE stock SET cantidad = cantidad - ? WHERE cod_producto = ? AND cod_deposito = ?");
+            $stmt9->bind_param("iii", $cantidad, $codigo_producto, $codigo_deposito);
+            $stmt9->execute();
+            $stmt9->close();
+        }
+
+        if ($stmt7) {
+            header("Location: ../../main.php?module=compras&alert=2");
+        } else {
+            header("Location: ../../main.php?module=compras&alert=3");
         }
     }
 }
-
 ?>

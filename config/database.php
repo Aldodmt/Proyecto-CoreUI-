@@ -2,7 +2,7 @@
 $server = "localhost";
 $username = "root";
 $password = "";
-$database = "proyecto";
+$database = "sysweb";
 
 $mysqli = new mysqli($server, $username, $password, $database);
 if ($mysqli->connect_error) {

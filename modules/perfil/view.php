@@ -8,13 +8,12 @@ if (isset($_SESSION['id_user'])) {
 ?>
 
 <section class="content-header">
-    <h1>
-        <i class="cil-user icon-title"></i>Perfil de usuario
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="?module=start"><i class="cil-home"></i>Inicio</a></li>
-        <li class="active">Perfil de usuario</li>
-    </ol>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="?module=start"><i class="cil-home"></i>Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Perfil</a></li>
+        </ol>
+    </nav>
 </section>
 
 <section class="content">
@@ -78,47 +77,42 @@ if (isset($_SESSION['id_user'])) {
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Nombre de usuario</label>
                             <div class="col-sm-10">
-                                <p class="form-control-plaintext"><?php echo $data['username'] ?></p>
+                                <p class="form-control-plaintext">:<?php echo $data['username'] ?></p>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Email</label>
                             <div class="col-sm-10">
-                                <p class="form-control-plaintext"><?php echo $data['email'] ?></p>
+                                <p class="form-control-plaintext">:<?php echo $data['email'] ?></p>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Teléfono</label>
                             <div class="col-sm-10">
-                                <p class="form-control-plaintext"><?php echo $data['telefono'] ?></p>
+                                <p class="form-control-plaintext">:<?php echo $data['telefono'] ?></p>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Permisos de acceso</label>
                             <div class="col-sm-10">
-                                <p class="form-control-plaintext"><?php echo $data['permisos_acceso'] ?></p>
+                                <p class="form-control-plaintext">:<?php echo $data['permisos_acceso'] ?></p>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Status</label>
                             <div class="col-sm-10">
-                                <p class="form-control-plaintext"><?php echo $data['status'] ?></p>
+                                <p class="form-control-plaintext">:<?php echo $data['status'] ?></p>
                             </div>
+                        </div>
+                        <hr>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary" name="Modificar">Modificar</button>
                         </div>
 
-                    </form>
-                </div>
-                <div class="card-footer">
-                    <form method="POST" action="?module=form_perfil" enctype="multipart/form-data">
-                        <div class="form-group row">
-                            <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-primary" name="Guardar">Modificar</button>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
