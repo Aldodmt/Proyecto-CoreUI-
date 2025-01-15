@@ -30,6 +30,18 @@ if ($_GET['act'] == 'insert' && isset($_POST['Guardar'])) {
     $timbrado = $_POST['codigo_tim'];
     $timbrado_num = $_POST['timb'];
 
+    $sql_fact = $mysqli->prepare("SELECT rango_fin FROM timbrado_comp where id_timbrado = ?");
+    $sql_fact->bind_param("i", $timbrado);
+    $sql_fact->execute();
+    $result_fact = $sql_fact->get_result();
+    $datos = mysqli_fetch_array($result_fact);
+    $rango_fin = $datos['rango_fin'];
+
+    if ($nro_factura >= $rango_fin) {
+        header("Location: ../../main.php?module=compras&alert=4");
+        exit;
+    }
+
     // Validar datos requeridos
     /*if (empty($codigo) || empty($codigo_deposito) || empty($codigo_proveedor) || empty($fecha) || empty($nro_factura) || empty($codigo_tim)) {
         echo "<script>alert('Error: Faltan datos obligatorios.'); window.history.back();</script>";

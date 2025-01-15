@@ -38,6 +38,12 @@
                         <h4><i class='fa fa-exclamation-circle'></i> Error!</h4>
                         No se pudo realizar la operación.
                     </div>";
+                } elseif ($_GET["alert"] == 4) {
+                    echo "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                        <button type='button' class='btn-close' data-coreui-dismiss='alert' aria-label='Close'></button>
+                        <h4><i class='fa fa-exclamation-circle'></i> Error!</h4>
+                        El timbrado supero su limite.
+                    </div>";
                 }
             }
             ?>
