@@ -7,17 +7,7 @@ if (empty($_SESSION['username']) && empty($_SESSION['password'])) {
     exit;
 }
 
-// Validación del timbrado
-$hoy = date('Y-m-d');
-$sql_vencimiento = $mysqli->prepare("SELECT * FROM timbrado_comp WHERE fecha_fin = ?");
-$sql_vencimiento->bind_param("s", $hoy);
-$sql_vencimiento->execute();
-$result_vencimiento = $sql_vencimiento->get_result();
 
-if ($result_vencimiento->num_rows > 0) {
-    echo "<script>alert('El timbrado ya ha vencido. Por favor, renueve el timbrado antes de continuar.'); window.history.back();</script>";
-    exit;
-}
 
 if ($_GET['act'] == 'insert' && isset($_POST['Guardar'])) {
     $codigo = $_POST['codigo'];
@@ -26,11 +16,19 @@ if ($_GET['act'] == 'insert' && isset($_POST['Guardar'])) {
     $fecha = $_POST['fecha'];
     $hora = $_POST['hora'];
     $nro_factura = $_POST['nro_factura'];
+    $nro_timbrado = $_POST['nro_timbrado'];
+    $fecha_tim = $_POST['timbrado_vencimiento'];
     $usuario = $_SESSION['id_user'];
-    $timbrado = $_POST['codigo_tim'];
-    $timbrado_num = $_POST['timb'];
 
-    $sql_fact = $mysqli->prepare("SELECT rango_fin FROM timbrado_comp where id_timbrado = ?");
+    // Validación del timbrado
+    $hoy = date('Y-m-d');
+    if ($fecha_tim <= $hoy) {
+        echo "<script>alert('El timbrado ya ha vencido. Por favor, renueve el timbrado antes de continuar.'); window.history.back();</script>";
+        exit;
+    }
+
+    //Sufrio un cambio en el examen XD
+    /*$sql_fact = $mysqli->prepare("SELECT rango_fin FROM timbrado_comp where id_timbrado = ?");
     $sql_fact->bind_param("i", $timbrado);
     $sql_fact->execute();
     $result_fact = $sql_fact->get_result();
@@ -40,7 +38,7 @@ if ($_GET['act'] == 'insert' && isset($_POST['Guardar'])) {
     if ($nro_factura >= $rango_fin) {
         header("Location: ../../main.php?module=compras&alert=4");
         exit;
-    }
+    }*/
 
     // Validar datos requeridos
     /*if (empty($codigo) || empty($codigo_deposito) || empty($codigo_proveedor) || empty($fecha) || empty($nro_factura) || empty($codigo_tim)) {
@@ -106,15 +104,9 @@ if ($_GET['act'] == 'insert' && isset($_POST['Guardar'])) {
     $id_orden = $data_orn['id_orden_comp'];
     $estado = 'activo';
 
-    // Actualizar en `timbrado`
-    $stmt = $mysqli->prepare("UPDATE timbrado_comp SET rango_inicio = ? WHERE id_timbrado  = ?");
-    $stmt->bind_param("ii", $nro_factura, $timbrado);
-    $stmt->execute();
-    $stmt->close();
-
     // Insertar cabecera de compra
-    $query = mysqli_query($mysqli, "INSERT INTO compra (cod_compra, cod_proveedor, nro_factura, fecha, estado, hora, id_user, id_orden_comp, id_timbrado)
-        VALUES ($codigo, $codigo_proveedor, $nro_factura, '$fecha', '$estado', '$hora', $usuario, $id_orden, $timbrado)")
+    $query = mysqli_query($mysqli, "INSERT INTO compra (cod_compra, cod_proveedor, nro_factura, fecha, estado, hora, id_user, id_orden_comp, nro_timbrado, timbrado_vencimiento)
+        VALUES ($codigo, $codigo_proveedor, '$nro_factura', '$fecha', '$estado', '$hora', $usuario, $id_orden, $nro_timbrado, '$fecha_tim')")
         or die("Error" . mysqli_error($mysqli));
 
     if ($query) {

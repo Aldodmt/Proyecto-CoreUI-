@@ -62,6 +62,8 @@
                                 <th class="text-center">Proveedor</th>
                                 <th class="text-center">Depósito</th>
                                 <th class="text-center">Nro. Factura</th>
+                                <th class="text-center">Nro. Timbrado</th>
+                                <th class="text-center">Timbrado Vencimiento</th>
                                 <th class="text-center">Producto</th>
                                 <th class="text-center">Cantidad</th>
                                 <th class="text-center">Precio</th>
@@ -90,6 +92,8 @@
                                 $total = ($data['cantidad'] * $data['precio']);
                                 $estado = $data['estado'];
                                 $usuario = $data['name_user'];
+                                $nro_timbrado = $data['nro_timbrado'];
+                                $timbri_vencimiento = $data['timbrado_vencimiento'];
 
                                 echo "<tr>
                                     <td class='text-center'>$cod</td>
@@ -99,7 +103,9 @@
                                     <td class='text-center'>$hora</td>
                                     <td class='text-center'>$proveedor</td>
                                     <td class='text-center'>$deposito</td>
-                                    <td class='text-center'>$formato_factura</td>
+                                    <td class='text-center'>$nro_factura</td>
+                                    <td class='text-center'>$nro_timbrado</td>
+                                    <td class='text-center'>$timbri_vencimiento</td>
                                     <td class='text-center'>$prod</td>
                                     <td class='text-center'>$cantidad</td>
                                     <td class='text-center'>$precio</td>

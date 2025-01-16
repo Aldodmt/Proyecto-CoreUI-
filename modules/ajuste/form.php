@@ -38,17 +38,6 @@ if ($_GET['form'] == 'add') { ?>
                             </div>
                         </div>
                         <br>
-                        <div class="form-group">
-                            <label class="col-md-2 col-form-label">Producto</label>
-                            <div class="col-md-10">
-                                <button type="button" class="btn btn-info" data-coreui-toggle="modal"
-                                    data-coreui-target="#myModal">
-                                    <i class="fa fa-plus"></i> Agregar Producto
-                                </button>
-                            </div>
-                        </div>
-                        <br>
-                        <div id="resultados" class="mt-3"></div>
                         <div class="form-groug">
                             <label class="col-md-2 col-form-label">Depósito</label>
                             <div class="col-md-4">
@@ -65,6 +54,17 @@ if ($_GET['form'] == 'add') { ?>
                             </div>
                         </div>
                         <br>
+                        <div class="form-group">
+                            <label class="col-md-2 col-form-label">Producto</label>
+                            <div class="col-md-10">
+                                <button type="button" class="btn btn-info" data-coreui-toggle="modal"
+                                    data-coreui-target="#myModal">
+                                    <i class="fa fa-plus"></i> Agregar Producto
+                                </button>
+                            </div>
+                        </div>
+                        <br>
+                        <div id="resultados" class="mt-3"></div>
                         <div class="form-group">
                             <label class="col-md-2 col-form-label">Motivo</label>
                             <div class="col-md-2">

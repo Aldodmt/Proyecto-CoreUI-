@@ -45,6 +45,11 @@ if ($_GET['form'] == 'add') { ?>
                         </div>
                         <br>
                         <div class="form-group row">
+                            <label class="col-md-2 col-form-label">N° de Factura</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" id="nro_factura" name="nro_factura"
+                                    placeholder="000-000-001" maxlength="11">
+                            </div>
                             <label class="col-md-2 col-form-label">Proveedor</label>
                             <div class="col-md-4">
                                 <select class="form-control" name="codigo_proveedor" required>
@@ -58,28 +63,15 @@ if ($_GET['form'] == 'add') { ?>
                                     ?>
                                 </select>
                             </div>
-                            <label class="col-md-2 col-form-label">N° de Factura</label>
-                            <div class="col-md-4">
-                                <?php
-                                $query_id = mysqli_query($mysqli, "SELECT MAX(nro_factura) as nro FROM compra")
-                                    or die("Error: " . mysqli_error($mysqli));
-                                $data_id = mysqli_fetch_assoc($query_id);
-                                $nro_factura = $data_id['nro'] + 1 ?? 1;
 
-                                // Formatear el número de factura 
-                                $formato_factura = "000-000-" . str_pad($nro_factura, 3, "0", STR_PAD_LEFT);
-                                ?>
-
-                                <!-- Campo para mostrar el formato de factura -->
-                                <input type="text" class="form-control" value="<?php echo $formato_factura; ?>" readonly>
-
-                                <!-- Campo oculto para enviar el número de factura real -->
-                                <input type="hidden" name="nro_factura" value="<?php echo $nro_factura; ?>">
-                            </div>
 
                         </div>
                         <br>
                         <div class="form-group row">
+                            <label class="col-md-2 col-form-label">N° de Timbrado</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" name="nro_timbrado" placeholder="12345678">
+                            </div>
                             <label class="col-md-2 col-form-label">Deposito</label>
                             <div class="col-md-4">
                                 <select class="form-control" name="codigo_deposito" required>
@@ -93,26 +85,14 @@ if ($_GET['form'] == 'add') { ?>
                                     ?>
                                 </select>
                             </div>
-                            <label class="col-md-2 col-form-label">N° de Timbrado</label>
-                            <div class="col-md-4">
-                                <?php
-                                // Consulta para obtener el número de timbrado y su ID
-                                $query_tim = mysqli_query($mysqli, "SELECT id_timbrado, numero_timbrado FROM timbrado_comp ORDER BY id_timbrado DESC LIMIT 1")
-                                    or die("Error: " . mysqli_error($mysqli));
 
-                                $dato_timbrado = mysqli_fetch_assoc($query_tim);
-
-                                // Manejo de casos cuando no hay registros en la tabla
-                                if ($dato_timbrado) {
-                                    $codigo_tim = $dato_timbrado['id_timbrado']; // ID del timbrado actual
-                                    $numero_timbrado = $dato_timbrado['numero_timbrado'];
-                                }
-                                ?>
-                                <!-- Campo oculto para almacenar el id_timbrado -->
-                                <input type="hidden" name="codigo_tim" value="<?php echo $codigo_tim; ?>">
-                                <!-- Campo visible con el número de timbrado -->
-                                <input type="text" class="form-control" name="timb" value="<?php echo $numero_timbrado; ?>"
-                                    readonly>
+                        </div>
+                        <br>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label">Timbrado vencimiento</label>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="timbrado_vencimiento"
+                                    value="<?php echo date("Y-m-d"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -130,6 +110,24 @@ if ($_GET['form'] == 'add') { ?>
                             <a href="?module=compras" class="btn btn-secondary">Cancelar</a>
                         </div>
                 </form>
+                <script>
+                    document.getElementById('nro_factura').addEventListener('input', function (e) {
+                        const input = e.target;
+                        let value = input.value.replace(/\D/g, '');
+
+                        if (value.length > 3) {
+                            value = value.substring(0, 3) + '-' + value.substring(3);
+                        }
+                        if (value.length > 7) {
+                            value = value.substring(0, 7) + '-' + value.substring(7);
+                        }
+                        if (value.length > 11) {
+                            value = value.substring(0, 11);
+                        }
+
+                        input.value = value;
+                    });
+                </script>
             </div>
         </div>
     </div>
